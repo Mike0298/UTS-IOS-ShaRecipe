@@ -37,7 +37,7 @@ struct RecipeItems: View {
 struct RecipeItems_Previews: PreviewProvider {
     static var previews: some View {
         ScrollView{
-            RecipeItems(recipes: RecipeController.allCuratedRecipe)
+            RecipeItems(recipes: RecipeController.allStaticCuratedRecipe)
         }
     }
 }

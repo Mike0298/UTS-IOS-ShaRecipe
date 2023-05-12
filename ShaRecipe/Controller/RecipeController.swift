@@ -7,8 +7,25 @@
 
 import Foundation
 
-class RecipeController {
-    static let allCuratedRecipe: [CuratedRecipe] = [
+class RecipeController: ObservableObject {
+    private let apiService = ShaRecipeService()
+    
+    @Published var fetchedCuratedRecipe: [CuratedRecipe] = []
+    
+    func fetchCuratedRecipes() async {
+        do {
+            let curatedRecipes = try await apiService.fetchCurated()
+            DispatchQueue.main.async {
+                self.fetchedCuratedRecipe = curatedRecipes
+//                print(self.fetchedCuratedRecipe)
+            }
+        } catch {
+            print("Failed to fetch curated recipes: \(error)")
+        }
+    }
+    
+    // for testing preview
+    static let allStaticCuratedRecipe: [CuratedRecipe] = [
         CuratedRecipe(
             name: "Healthy banana bread",
             image: "https://img.taste.com.au/qe2CA14c/w643-h428-cfill-q90/taste/2019/02/healthy-banana-bread-p64-147080-3.jpg",

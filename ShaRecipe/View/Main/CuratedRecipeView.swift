@@ -8,14 +8,21 @@
 import SwiftUI
 
 struct CuratedRecipeView: View {
+    @ObservedObject var recipeController = RecipeController()
+    
     var body: some View {
         NavigationView {
             ScrollView{
-                RecipeItems(recipes: RecipeController.allCuratedRecipe)
+                RecipeItems(recipes: recipeController.fetchedCuratedRecipe)
             }
             .navigationTitle("Curated Recipes")
         }
         .navigationViewStyle(.stack)
+        .onAppear {
+            Task {
+                await recipeController.fetchCuratedRecipes()
+            }
+        }
     }
 }
 

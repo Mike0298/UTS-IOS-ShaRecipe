@@ -7,8 +7,8 @@
 
 import Foundation
 
-struct CuratedRecipe: Identifiable {
-    let id = UUID()
+struct CuratedRecipe: Identifiable, Decodable {
+    var id = UUID()
     let name: String
     let image: String
     let description: String

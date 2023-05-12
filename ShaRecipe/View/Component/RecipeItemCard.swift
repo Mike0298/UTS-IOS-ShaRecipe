@@ -48,6 +48,6 @@ struct RecipeItemCard: View {
 
 struct RecipeItemCard_Previews: PreviewProvider {
     static var previews: some View {
-        RecipeItemCard(recipe: RecipeController.allCuratedRecipe[0])
+        RecipeItemCard(recipe: RecipeController.allStaticCuratedRecipe[0])
     }
 }
