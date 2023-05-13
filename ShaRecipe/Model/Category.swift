@@ -10,7 +10,7 @@ import Foundation
 enum Category: String, CaseIterable, Identifiable {
     var id: String { self.rawValue }
     
-    case soup = "Suop"
+    case soup = "Soup"
     case sald = "Salad"
     case main = "Main"
     case side = "Side"
