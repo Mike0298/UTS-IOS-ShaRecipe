@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CuratedRecipeView: View {
-    @ObservedObject var recipeController = RecipeController()
+    @EnvironmentObject var recipeController: RecipeController
     
     var body: some View {
         NavigationView {
@@ -18,16 +18,12 @@ struct CuratedRecipeView: View {
             .navigationTitle("Curated Recipes")
         }
         .navigationViewStyle(.stack)
-        .onAppear {
-            Task {
-                await recipeController.fetchCuratedRecipes()
-            }
-        }
     }
 }
 
 struct CuratedRecipeView_Previews: PreviewProvider {
     static var previews: some View {
         CuratedRecipeView()
+            .environmentObject(RecipeController())
     }
 }

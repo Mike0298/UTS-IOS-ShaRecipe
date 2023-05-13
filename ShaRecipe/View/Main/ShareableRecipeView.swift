@@ -8,11 +8,14 @@
 import SwiftUI
 
 struct ShareableRecipeView: View {
+    @EnvironmentObject var recipeController: RecipeController
+    
     var body: some View {
-        NavigationView() {
-            Text("Shareable Recipes")
-            
-                .navigationTitle("Shareable Recipes")
+        NavigationView {
+            ScrollView{
+                ShaRecipeItems(recipes: recipeController.shareableRecipe)
+            }
+            .navigationTitle("Curated Recipes")
         }
         .navigationViewStyle(.stack)
     }
@@ -21,5 +24,6 @@ struct ShareableRecipeView: View {
 struct ShareableRecipeView_Previews: PreviewProvider {
     static var previews: some View {
         ShareableRecipeView()
+            .environmentObject(RecipeController())
     }
 }

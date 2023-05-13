@@ -22,6 +22,11 @@
 		2793E9D12A0E2F8300A3AAEA /* RecipeItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2793E9D02A0E2F8300A3AAEA /* RecipeItems.swift */; };
 		2793E9D32A0E31B300A3AAEA /* RecipeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2793E9D22A0E31B300A3AAEA /* RecipeView.swift */; };
 		2793E9D52A0E353600A3AAEA /* ShaRecipeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2793E9D42A0E353600A3AAEA /* ShaRecipeService.swift */; };
+		2793E9D72A0EF23800A3AAEA /* AddRecipeForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2793E9D62A0EF23800A3AAEA /* AddRecipeForm.swift */; };
+		2793E9D92A0F03FB00A3AAEA /* ShareableRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2793E9D82A0F03FB00A3AAEA /* ShareableRecipe.swift */; };
+		2793E9DD2A0F06D000A3AAEA /* ShaRecipeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2793E9DC2A0F06D000A3AAEA /* ShaRecipeView.swift */; };
+		2793E9DF2A0F0A4300A3AAEA /* ShaRecipeItemCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2793E9DE2A0F0A4300A3AAEA /* ShaRecipeItemCard.swift */; };
+		2793E9E12A0F0AF900A3AAEA /* ShaRecipeItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2793E9E02A0F0AF900A3AAEA /* ShaRecipeItems.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +46,11 @@
 		2793E9D02A0E2F8300A3AAEA /* RecipeItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeItems.swift; sourceTree = "<group>"; };
 		2793E9D22A0E31B300A3AAEA /* RecipeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeView.swift; sourceTree = "<group>"; };
 		2793E9D42A0E353600A3AAEA /* ShaRecipeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaRecipeService.swift; sourceTree = "<group>"; };
+		2793E9D62A0EF23800A3AAEA /* AddRecipeForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRecipeForm.swift; sourceTree = "<group>"; };
+		2793E9D82A0F03FB00A3AAEA /* ShareableRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareableRecipe.swift; sourceTree = "<group>"; };
+		2793E9DC2A0F06D000A3AAEA /* ShaRecipeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaRecipeView.swift; sourceTree = "<group>"; };
+		2793E9DE2A0F0A4300A3AAEA /* ShaRecipeItemCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaRecipeItemCard.swift; sourceTree = "<group>"; };
+		2793E9E02A0F0AF900A3AAEA /* ShaRecipeItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaRecipeItems.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,6 +105,7 @@
 			isa = PBXGroup;
 			children = (
 				2793E9C72A0E249C00A3AAEA /* CurratedRecipe.swift */,
+				2793E9D82A0F03FB00A3AAEA /* ShareableRecipe.swift */,
 				2793E9C92A0E271200A3AAEA /* Category.swift */,
 				2793E9D42A0E353600A3AAEA /* ShaRecipeService.swift */,
 			);
@@ -126,8 +137,12 @@
 			children = (
 				2793E9C52A0E230000A3AAEA /* NavBar.swift */,
 				2793E9CE2A0E2BD000A3AAEA /* RecipeItemCard.swift */,
+				2793E9DE2A0F0A4300A3AAEA /* ShaRecipeItemCard.swift */,
 				2793E9D02A0E2F8300A3AAEA /* RecipeItems.swift */,
+				2793E9E02A0F0AF900A3AAEA /* ShaRecipeItems.swift */,
 				2793E9D22A0E31B300A3AAEA /* RecipeView.swift */,
+				2793E9DC2A0F06D000A3AAEA /* ShaRecipeView.swift */,
+				2793E9D62A0EF23800A3AAEA /* AddRecipeForm.swift */,
 			);
 			path = Component;
 			sourceTree = "<group>";
@@ -217,11 +232,16 @@
 				2793E9C42A0E21D400A3AAEA /* ShareableRecipeView.swift in Sources */,
 				2793E9CD2A0E285200A3AAEA /* RecipeController.swift in Sources */,
 				2793E9D32A0E31B300A3AAEA /* RecipeView.swift in Sources */,
+				2793E9E12A0F0AF900A3AAEA /* ShaRecipeItems.swift in Sources */,
 				2793E9CF2A0E2BD000A3AAEA /* RecipeItemCard.swift in Sources */,
 				2793E9D52A0E353600A3AAEA /* ShaRecipeService.swift in Sources */,
 				2793E9C22A0E21BD00A3AAEA /* AddRecipeView.swift in Sources */,
 				2793E9C62A0E230000A3AAEA /* NavBar.swift in Sources */,
+				2793E9D72A0EF23800A3AAEA /* AddRecipeForm.swift in Sources */,
 				2793E9CA2A0E271200A3AAEA /* Category.swift in Sources */,
+				2793E9DD2A0F06D000A3AAEA /* ShaRecipeView.swift in Sources */,
+				2793E9DF2A0F0A4300A3AAEA /* ShaRecipeItemCard.swift in Sources */,
+				2793E9D92A0F03FB00A3AAEA /* ShareableRecipe.swift in Sources */,
 				2793E9D12A0E2F8300A3AAEA /* RecipeItems.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -16,13 +16,18 @@ struct RecipeItemCard: View {
                 image
                     .resizable()
                     .aspectRatio(contentMode: .fill)
-                    .overlay(alignment: .bottom) {
+                    .overlay(
+                        Color.black.opacity(0.3)
+                    )
+                    .overlay(alignment: .center) {
                         Text(recipe.name)
                             .font(.headline)
                             .foregroundColor(.white)
                             .frame(maxWidth: 136)
                             .padding()
+                            .multilineTextAlignment(.center)
                     }
+                    
             } placeholder: {
                 Image(systemName: "photo")
                     .resizable()

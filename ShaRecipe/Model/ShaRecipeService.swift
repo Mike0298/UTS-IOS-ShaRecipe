@@ -12,10 +12,10 @@ class ShaRecipeService {
     
     func fetchCurated() async throws -> [CuratedRecipe] {
         let urlString = "\(serviceEndPoint)/curated"
-        return try await performRequest(urlString: urlString)
+        return try await performGetCuratedRequest(urlString: urlString)
     }
 
-    func performRequest(urlString: String) async throws -> [CuratedRecipe] {
+    func performGetCuratedRequest(urlString: String) async throws -> [CuratedRecipe] {
         guard let url = URL(string: urlString) else {
             throw URLError(.badURL)
         }

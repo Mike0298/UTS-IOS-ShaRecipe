@@ -9,9 +9,12 @@ import SwiftUI
 
 @main
 struct ShaRecipeApp: App {
+    @StateObject var recipeController = RecipeController()
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(recipeController)
         }
     }
 }

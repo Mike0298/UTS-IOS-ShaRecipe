@@ -7,7 +7,9 @@
 
 import Foundation
 
-enum Category: String {
+enum Category: String, CaseIterable, Identifiable {
+    var id: String { self.rawValue }
+    
     case soup = "Suop"
     case sald = "Salad"
     case main = "Main"
