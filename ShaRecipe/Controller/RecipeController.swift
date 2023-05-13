@@ -29,6 +29,21 @@ class RecipeController: ObservableObject {
             }
         }
     }
+    
+    func fetchShareableRecipe(code: String) async throws -> ShareableRecipe {
+        let shareableRes = try await apiService.getShareable(code: code)
+        let shareableRecipe = ShareableRecipe(
+            name: shareableRes.name,
+            description: shareableRes.description,
+            ingredients: shareableRes.ingredients,
+            direction: shareableRes.direction,
+            category: shareableRes.category,
+            code: shareableRes.code
+        )
+        print(shareableRecipe)
+        return shareableRecipe
+    }
+
 
 
     func addShareableRecipe(recipe: ShareableRecipe) {

@@ -9,42 +9,24 @@ import SwiftUI
 
 struct AddRecipeForm: View {
     @EnvironmentObject var recipeController: RecipeController
-    
-    @State private var name: String = ""
-    @State private var selectedCategory: Category = Category.main
-    @State private var description: String = ""
-    @State private var ingredients: String = ""
-    @State private var direction: String = ""
+    @State private var shareableCode: String = ""
     
     @State private var navigateToRecipe = false
     
-    @Environment(\.dismiss) var dismiss
+    @State private var fetchedRecipe: ShareableRecipe?
     
+    @State private var showErrorPrompt = false
+    
+    @Environment(\.dismiss) var dismiss
+        
     var body: some View {
         NavigationView() {
             Form {
-                Section(header: Text("Name")) {
-                    TextField("Recipe Name", text: $name)
-                }
-                Section(header: Text("Category")) {
-                    Picker("Choose Category", selection: $selectedCategory) {
-                        ForEach(Category.allCases) { category in
-                            Text(category.rawValue)
-                                .tag(category)
-                        }
-                    }
-                    .pickerStyle(.menu)
-                }
-                Section(header: Text("Description")) {
-                    TextEditor(text: $description)
-                }
-                Section(header: Text("Ingredients")) {
-                    TextEditor(text: $ingredients)
-                }
-                Section(header: Text("Direction")) {
-                    TextEditor(text: $direction)
+                Section(header: Text("Enter shareable code")) {
+                    TextField("Shareable code", text: $shareableCode)
                 }
             }
+            
             .toolbar(content: {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button {
@@ -56,30 +38,34 @@ struct AddRecipeForm: View {
                 }
                 
                 ToolbarItem() {
-                    NavigationLink(isActive: $navigateToRecipe) {
-                        ShaRecipeView(recipe: ShareableRecipe(
-                            name: name,
-                            description: description,
-                            ingredients: ingredients,
-                            direction: direction,
-                            category: selectedCategory.rawValue,
-                            code: name)
-                        )
-                        .navigationBarBackButtonHidden(true)
-                    } label: {
-                        Button {
-                            saveRecipe()
-                            navigateToRecipe = true
+                    ZStack{
+                        NavigationLink(isActive: $navigateToRecipe) {
+                            if (fetchedRecipe != nil) {
+                                ShaRecipeView(recipe: fetchedRecipe!)
+                                    .navigationBarBackButtonHidden(true)
+                            }
                         } label: {
-                            Label("Done", systemImage: "checkmark")
-                                .labelStyle(.iconOnly)
+                            Button {
+                                submitForm()
+                            } label: {
+                                Label("Done", systemImage: "checkmark")
+                                    .labelStyle(.iconOnly)
+                            }
                         }
+                        .disabled(shareableCode.isEmpty)
                     }
-                    .disabled(name.isEmpty || description.isEmpty || ingredients.isEmpty || direction.isEmpty)
+                    .frame(width: 44, height: 44)
                 }
             })
             .navigationTitle("New Recipe")
             .navigationBarTitleDisplayMode(.inline)
+            .alert(isPresented: $showErrorPrompt) {
+                Alert(
+                    title: Text("Error"),
+                    message: Text("Cannot find recipe code \(shareableCode)"),
+                    dismissButton: .default(Text("OK"))
+                )
+            }
         }
         .navigationViewStyle(.stack)
     }
@@ -92,13 +78,25 @@ struct AddRecipeForm_Previews: PreviewProvider {
 }
 
 extension AddRecipeForm {
-    private func saveRecipe() {
-        let recipe = ShareableRecipe(name: name,
-                                     description: description,
-                                     ingredients: ingredients,
-                                     direction: direction,
-                                     category: selectedCategory.rawValue,
-                                     code: name)
-        recipeController.addShareableRecipe(recipe: recipe)
+    func submitForm() {
+        Task {
+            fetchedRecipe = await getShareableRecipe()
+            if fetchedRecipe != nil {
+                showErrorPrompt = false
+                navigateToRecipe = true
+            }
+        }
+    }
+    
+    func getShareableRecipe() async -> ShareableRecipe? {
+        do {
+            let recipe = try await recipeController.fetchShareableRecipe(code: shareableCode)
+            recipeController.addShareableRecipe(recipe: recipe)
+            return recipe
+        } catch {
+            print("Failed to fetch shareable recipe: \(error)")
+            showErrorPrompt = true
+            return nil
+        }
     }
 }

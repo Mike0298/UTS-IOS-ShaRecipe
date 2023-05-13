@@ -15,7 +15,7 @@ struct ShareableRecipeView: View {
             ScrollView{
                 ShaRecipeItems(recipes: recipeController.shareableRecipe)
             }
-            .navigationTitle("Curated Recipes")
+            .navigationTitle("Shareable Recipes")
         }
         .navigationViewStyle(.stack)
     }

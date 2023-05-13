@@ -8,18 +8,38 @@
 import SwiftUI
 
 struct AddRecipeView: View {
-    @State private var showForm = false
+    @State private var showCreateForm = false
+    @State private var showAddForm = false
     
     
     var body: some View {
         NavigationView() {
-            Button("Create shareable recipe") {
-                showForm = true
+            VStack(spacing: 100) {
+                Spacer()
+                
+                Button(action: {
+                    showCreateForm = true
+                }) {
+                    Text("Create Shareable Recipe")
+                        .font(.headline)
+                        .padding()
+                }
+                Button(action: {
+                    showAddForm = true
+                }) {
+                    Text("Add Shareable Recipe")
+                        .font(.headline)
+                        .padding()
+                }
+                Spacer()
             }
-                .navigationTitle("Add Local Recipe")
+            .navigationTitle("Add Local Recipe")
         }
         .navigationViewStyle(.stack)
-        .sheet(isPresented: $showForm) {
+        .sheet(isPresented: $showCreateForm) {
+            CreateRecipeForm()
+        }
+        .sheet(isPresented: $showAddForm) {
             AddRecipeForm()
         }
     }

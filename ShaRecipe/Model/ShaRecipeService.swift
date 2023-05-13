@@ -14,6 +14,28 @@ class ShaRecipeService {
         let urlString = "\(serviceEndPoint)/curated"
         return try await performGetCuratedRequest(urlString: urlString)
     }
+    
+    func createShareable() {
+        
+    }
+    
+    func getShareable(code: String) async throws -> GetShareableRes {
+        let urlString = "\(serviceEndPoint)/shareable/\(code)"
+        return try await performGetShareableRequest(urlString: urlString)
+    }
+    
+    func performGetShareableRequest(urlString: String) async throws -> GetShareableRes {
+        guard let url = URL(string: urlString) else {
+            throw URLError(.badURL)
+        }
+        
+        let (data, _) = try await URLSession.shared.data(from: url)
+        
+        let decoder = JSONDecoder()
+        let result = try decoder.decode(GetShareableRes.self, from: data)
+        
+        return result
+    }
 
     func performGetCuratedRequest(urlString: String) async throws -> [CuratedRecipe] {
         guard let url = URL(string: urlString) else {
