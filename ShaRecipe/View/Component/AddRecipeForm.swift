@@ -16,6 +16,7 @@ struct AddRecipeForm: View {
     @State private var fetchedRecipe: ShareableRecipe?
     
     @State private var showErrorPrompt = false
+    @State private var showErrorMessage = ""
     
     @Environment(\.dismiss) var dismiss
         
@@ -38,23 +39,20 @@ struct AddRecipeForm: View {
                 }
                 
                 ToolbarItem() {
-                    ZStack{
-                        NavigationLink(isActive: $navigateToRecipe) {
-                            if (fetchedRecipe != nil) {
-                                ShaRecipeView(recipe: fetchedRecipe!)
-                                    .navigationBarBackButtonHidden(true)
-                            }
-                        } label: {
-                            Button {
-                                submitForm()
-                            } label: {
-                                Label("Done", systemImage: "checkmark")
-                                    .labelStyle(.iconOnly)
-                            }
+                    NavigationLink(isActive: $navigateToRecipe) {
+                        if (fetchedRecipe != nil) {
+                            ShaRecipeView(recipe: fetchedRecipe!)
+                                .navigationBarBackButtonHidden(true)
                         }
-                        .disabled(shareableCode.isEmpty)
+                    } label: {
+                        Button {
+                            submitForm()
+                        } label: {
+                            Label("Done", systemImage: "checkmark")
+                                .labelStyle(.iconOnly)
+                        }
                     }
-                    .frame(width: 44, height: 44)
+                    .disabled(shareableCode.isEmpty)
                 }
             })
             .navigationTitle("New Recipe")
@@ -62,7 +60,7 @@ struct AddRecipeForm: View {
             .alert(isPresented: $showErrorPrompt) {
                 Alert(
                     title: Text("Error"),
-                    message: Text("Cannot find recipe code \(shareableCode)"),
+                    message: Text(showErrorMessage),
                     dismissButton: .default(Text("OK"))
                 )
             }
@@ -78,7 +76,13 @@ struct AddRecipeForm_Previews: PreviewProvider {
 }
 
 extension AddRecipeForm {
-    func submitForm() {
+    private func submitForm() {
+        if (recipeController.isShareableRecipeExist(shareableCode)) {
+            showErrorMessage = "Recipe code \(shareableCode) is already in your library"
+            showErrorPrompt = true
+            return
+        }
+        
         Task {
             fetchedRecipe = await getShareableRecipe()
             if fetchedRecipe != nil {
@@ -88,13 +92,14 @@ extension AddRecipeForm {
         }
     }
     
-    func getShareableRecipe() async -> ShareableRecipe? {
+    private func getShareableRecipe() async -> ShareableRecipe? {
         do {
             let recipe = try await recipeController.fetchShareableRecipe(code: shareableCode)
             recipeController.addShareableRecipe(recipe: recipe)
             return recipe
         } catch {
             print("Failed to fetch shareable recipe: \(error)")
+            showErrorMessage = "Cannot find recipe code \(shareableCode)"
             showErrorPrompt = true
             return nil
         }

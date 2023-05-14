@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ShaRecipeItems: View {
+    @EnvironmentObject var recipeController: RecipeController
+    
     var recipes: [ShareableRecipe]
     
     var body: some View {
@@ -19,6 +21,12 @@ struct ShaRecipeItems: View {
                     .opacity(0.7)
                     
                 Spacer()
+                Button {
+                    recipeController.clearShareableRecipe()
+                } label: {
+                    Label("Delete all", systemImage: "trash")
+                }
+                .foregroundColor(.red)
             }
             
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 160), spacing: 15)], spacing: 15) {

@@ -16,7 +16,10 @@ struct CreateRecipeForm: View {
     @State private var ingredients: String = ""
     @State private var direction: String = ""
     
+    @State private var fetchedRecipe: ShareableRecipe?
+    
     @State private var navigateToRecipe = false
+    @State private var showErrorPrompt = false
     
     @Environment(\.dismiss) var dismiss
     
@@ -57,19 +60,13 @@ struct CreateRecipeForm: View {
                 
                 ToolbarItem() {
                     NavigationLink(isActive: $navigateToRecipe) {
-                        ShaRecipeView(recipe: ShareableRecipe(
-                            name: name,
-                            description: description,
-                            ingredients: ingredients,
-                            direction: direction,
-                            category: selectedCategory.rawValue,
-                            code: name)
-                        )
-                        .navigationBarBackButtonHidden(true)
+                        if (fetchedRecipe != nil) {
+                            ShaRecipeView(recipe: fetchedRecipe!)
+                                .navigationBarBackButtonHidden(true)
+                        }
                     } label: {
                         Button {
-                            saveRecipe()
-                            navigateToRecipe = true
+                            submiteForm()
                         } label: {
                             Label("Done", systemImage: "checkmark")
                                 .labelStyle(.iconOnly)
@@ -80,6 +77,13 @@ struct CreateRecipeForm: View {
             })
             .navigationTitle("New Recipe")
             .navigationBarTitleDisplayMode(.inline)
+            .alert(isPresented: $showErrorPrompt) {
+                Alert(
+                    title: Text("Error"),
+                    message: Text("Hmm, we have trouble creating that recipe, let's try again"),
+                    dismissButton: .default(Text("OK"))
+                )
+            }
         }
         .navigationViewStyle(.stack)
     }
@@ -92,13 +96,33 @@ struct CreateRecipeForm_Previews: PreviewProvider {
 }
 
 extension CreateRecipeForm {
-    private func saveRecipe() {
-        let recipe = ShareableRecipe(name: name,
-                                     description: description,
-                                     ingredients: ingredients,
-                                     direction: direction,
-                                     category: selectedCategory.rawValue,
-                                     code: name)
-        recipeController.addShareableRecipe(recipe: recipe)
+    private func submiteForm() {
+        Task {
+            fetchedRecipe = await createShareableRecipe()
+            if fetchedRecipe != nil {
+                showErrorPrompt = false
+                navigateToRecipe = true
+            }
+        }
+    }
+    
+    private func createShareableRecipe() async -> ShareableRecipe? {
+        let recipeReq = CreateShareableReq(
+            name: name,
+            description: description,
+            ingredients: ingredients,
+            direction: direction,
+            category: selectedCategory.rawValue
+        )
+        
+        do {
+            let recipe = try await recipeController.createShareableRecipe(recipe: recipeReq)
+            recipeController.addShareableRecipe(recipe: recipe)
+            return recipe
+        } catch {
+            print("Failed to fetch shareable recipe: \(error)")
+            showErrorPrompt = true
+            return nil
+        }
     }
 }

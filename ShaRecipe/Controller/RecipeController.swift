@@ -15,6 +15,7 @@ class RecipeController: ObservableObject {
     
     init() {
         fetchCuratedRecipes()
+        shareableRecipe = getShareableRecipeFromUserDefaults()
     }
     
     func fetchCuratedRecipes() {
@@ -40,15 +41,53 @@ class RecipeController: ObservableObject {
             category: shareableRes.category,
             code: shareableRes.code
         )
-        print(shareableRecipe)
+        return shareableRecipe
+    }
+    
+    func createShareableRecipe(recipe: CreateShareableReq) async throws -> ShareableRecipe {
+        let shareableRes = try await apiService.createShareable(recipe: recipe)
+        let shareableRecipe = ShareableRecipe(
+            name: recipe.name,
+            description: recipe.description,
+            ingredients: recipe.ingredients,
+            direction: recipe.direction,
+            category: recipe.category,
+            code: shareableRes.code
+        )
         return shareableRecipe
     }
 
 
-
     func addShareableRecipe(recipe: ShareableRecipe) {
         shareableRecipe.append(recipe)
+        saveShareableRecipeToUserDefaults()
     }
+    
+    func isShareableRecipeExist(_ code: String) -> Bool {
+        return shareableRecipe.contains(where: { $0.code == code })
+    }
+    
+    // retrive/update/clear data from UserDefault
+    func getShareableRecipeFromUserDefaults() -> [ShareableRecipe] {
+        if let data = UserDefaults.standard.data(forKey: "ShareableRecipeKey") {
+            if let decoded = try? JSONDecoder().decode([ShareableRecipe].self, from: data) {
+                return decoded
+            }
+        }
+        return []
+    }
+
+    func saveShareableRecipeToUserDefaults() {
+        if let encoded = try? JSONEncoder().encode(shareableRecipe) {
+            UserDefaults.standard.set(encoded, forKey: "ShareableRecipeKey")
+        }
+    }
+    
+    func clearShareableRecipe() {
+        shareableRecipe = []
+        UserDefaults.standard.removeObject(forKey: "ShareableRecipeKey")
+    }
+
     
     // for testing preview
     static let allStaticCuratedRecipe: [CuratedRecipe] = [

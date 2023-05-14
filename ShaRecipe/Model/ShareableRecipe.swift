@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ShareableRecipe: Identifiable, Decodable {
+struct ShareableRecipe: Identifiable, Codable {
     var id = UUID()
     let name: String
     let description: String
