@@ -10,7 +10,7 @@ import Foundation
 class ShaRecipeService {
     private let serviceEndPoint = "https://sharecipe.onrender.com/api"
     
-    func fetchCurated() async throws -> [CuratedRecipe] {
+    func fetchCurated() async throws -> [CuratedRecipeRes] {
         let urlString = "\(serviceEndPoint)/curated"
         return try await performGetCuratedRequest(urlString: urlString)
     }
@@ -56,32 +56,16 @@ class ShaRecipeService {
         return result
     }
     
-    
-    // todo: refractor this later
-    func performGetCuratedRequest(urlString: String) async throws -> [CuratedRecipe] {
+    func performGetCuratedRequest(urlString: String) async throws -> [CuratedRecipeRes] {
         guard let url = URL(string: urlString) else {
             throw URLError(.badURL)
         }
-        
+
         let (data, _) = try await URLSession.shared.data(from: url)
+        let decoder = JSONDecoder()
+        let result = try decoder.decode([CuratedRecipeRes].self, from: data)
         
-        let json = try JSONSerialization.jsonObject(with: data, options: []) as? [[String: Any]]
-        var curatedRecipes: [CuratedRecipe] = []
-        
-        for item in json ?? [] {
-            if let name = item["name"] as? String,
-               let image = item["image"] as? String,
-               let description = item["description"] as? String,
-               let ingredients = item["ingredients"] as? String,
-               let direction = item["direction"] as? String,
-               let category = item["category"] as? String {
-                
-                let curatedRecipe = CuratedRecipe(name: name, image: image, description: description, ingredients: ingredients, direction: direction, category: category)
-                curatedRecipes.append(curatedRecipe)
-            }
-        }
-        
-        return curatedRecipes
+        return result
     }
     
 }

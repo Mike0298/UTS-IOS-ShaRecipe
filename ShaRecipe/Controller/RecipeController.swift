@@ -16,17 +16,16 @@ class RecipeController: ObservableObject {
     @Published private(set) var isError: Bool = false
     
     init() {
-        fetchCuratedRecipes()
+        beginFetchCuratedRecipes()
         shareableRecipe = getShareableRecipeFromUserDefaults()
     }
     
-    // async here because it is not a good idea to put task in init
-    func fetchCuratedRecipes() {
+    func beginFetchCuratedRecipes() {
         isError = false
         isFetching = true
         Task {
             do {
-                let curatedRecipes = try await apiService.fetchCurated()
+                let curatedRecipes = try await fetchCuratedRecipes()
                 DispatchQueue.main.async {
                     self.fetchedCuratedRecipe = curatedRecipes
                     self.isFetching = false
@@ -39,6 +38,23 @@ class RecipeController: ObservableObject {
                 }
             }
         }
+    }
+    
+    func fetchCuratedRecipes() async throws -> [CuratedRecipe] {
+        let curatedRecipesRes = try await apiService.fetchCurated()
+        let curatedRecipes = curatedRecipesRes.map { curatedRecipeRes -> CuratedRecipe in
+            let curatedRecipe = CuratedRecipe(
+                name: curatedRecipeRes.name,
+                image: curatedRecipeRes.image,
+                description: curatedRecipeRes.description,
+                ingredients: curatedRecipeRes.ingredients,
+                direction: curatedRecipeRes.direction,
+                category: curatedRecipeRes.category
+            )
+            return curatedRecipe
+        }
+        
+        return curatedRecipes
     }
     
     func fetchShareableRecipe(code: String) async throws -> ShareableRecipe {

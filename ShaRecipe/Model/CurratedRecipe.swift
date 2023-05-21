@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct CuratedRecipe: Identifiable, Decodable {
+struct CuratedRecipe: Identifiable {
     var id = UUID()
     let name: String
     let image: String
@@ -17,3 +17,11 @@ struct CuratedRecipe: Identifiable, Decodable {
     let category: Category.RawValue
 }
 
+struct CuratedRecipeRes: Decodable {
+    let name: String
+    let image: String
+    let description: String
+    let ingredients: String
+    let direction: String
+    let category: Category.RawValue
+}

@@ -16,6 +16,9 @@ struct CuratedRecipeView: View {
                 RecipeItems(recipes: recipeController.fetchedCuratedRecipe, isFetching: recipeController.isFetching, isError: recipeController.isError)
             }
             .navigationTitle("Curated Recipes")
+            .refreshable {
+                recipeController.beginFetchCuratedRecipes()
+            }
         }
         .navigationViewStyle(.stack)
     }

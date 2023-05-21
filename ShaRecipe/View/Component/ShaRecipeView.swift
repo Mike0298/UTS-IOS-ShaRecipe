@@ -22,6 +22,24 @@ struct ShaRecipeView: View {
                     .multilineTextAlignment(.center)
                 
                 VStack(alignment: .leading, spacing: 30) {
+                    if !recipe.code.isEmpty {
+                        VStack(alignment: .leading, spacing: 10) {
+                            Text("Share Code (hold to copy)")
+                                .frame(maxWidth: .infinity, alignment: .center)
+                                .font(.headline)
+                            Text(recipe.code)
+                                .frame(maxWidth: .infinity, alignment: .center)
+                                .contextMenu {
+                                    Button(action: {
+                                        UIPasteboard.general.string = recipe.code
+                                    }) {
+                                        Text("Copy")
+                                        Image(systemName: "doc.on.doc")
+                                    }
+                                }
+                        }
+                    }
+                    
                     if !recipe.description.isEmpty {
                         Text(recipe.description)
                     }
@@ -39,21 +57,6 @@ struct ShaRecipeView: View {
                             Text("Direction")
                                 .font(.headline)
                             Text(recipe.direction)
-                        }
-                    }
-                    if !recipe.code.isEmpty {
-                        VStack(alignment: .leading, spacing: 20) {
-                            Text("Share Code (hold to copy)")
-                                .font(.headline)
-                            Text(recipe.code)
-                                .contextMenu {
-                                    Button(action: {
-                                        UIPasteboard.general.string = recipe.code
-                                    }) {
-                                        Text("Copy")
-                                        Image(systemName: "doc.on.doc")
-                                    }
-                                }
                         }
                     }
                     if deleteable {
