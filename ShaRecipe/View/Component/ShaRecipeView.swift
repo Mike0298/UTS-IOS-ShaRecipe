@@ -29,6 +29,7 @@ struct ShaRecipeView: View {
                                 .font(.headline)
                             Text(recipe.code)
                                 .frame(maxWidth: .infinity, alignment: .center)
+                                // hold to copy feature
                                 .contextMenu {
                                     Button(action: {
                                         UIPasteboard.general.string = recipe.code

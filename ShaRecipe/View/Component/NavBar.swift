@@ -20,7 +20,7 @@ struct NavBar: View {
                 }
             ShareableRecipeView()
                 .tabItem {
-                    Label("Shareable", systemImage: "personalhotspot")
+                    Label("Shareable Library", systemImage: "folder")
                 }
         }
     }

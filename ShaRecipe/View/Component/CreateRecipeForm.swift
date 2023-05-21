@@ -96,6 +96,7 @@ struct CreateRecipeForm_Previews: PreviewProvider {
 }
 
 extension CreateRecipeForm {
+    // handle async for the form
     private func submiteForm() {
         Task {
             fetchedRecipe = await createShareableRecipe()
@@ -106,6 +107,8 @@ extension CreateRecipeForm {
         }
     }
     
+    // prepare data and do the API request.
+    // then get data to show on the UI, also ammend the new recipe into local recipe array
     private func createShareableRecipe() async -> ShareableRecipe? {
         let recipeReq = CreateShareableReq(
             name: name,
@@ -120,7 +123,7 @@ extension CreateRecipeForm {
             recipeController.addShareableRecipe(recipe: recipe)
             return recipe
         } catch {
-            print("Failed to fetch shareable recipe: \(error)")
+            print("Failed to create shareable recipe: \(error)")
             showErrorPrompt = true
             return nil
         }

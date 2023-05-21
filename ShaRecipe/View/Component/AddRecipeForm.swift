@@ -76,7 +76,9 @@ struct AddRecipeForm_Previews: PreviewProvider {
 }
 
 extension AddRecipeForm {
+    // handle async for the form
     private func submitForm() {
+        // reject the code if we already have it in the local array
         if (recipeController.isShareableRecipeExist(shareableCode)) {
             showErrorMessage = "Recipe code \(shareableCode) is already in your library"
             showErrorPrompt = true
@@ -92,6 +94,8 @@ extension AddRecipeForm {
         }
     }
     
+    // prepare data and do the API request.
+    // then get data to show on the UI, also ammend the new recipe into local recipe array
     private func getShareableRecipe() async -> ShareableRecipe? {
         do {
             let recipe = try await recipeController.fetchShareableRecipe(code: shareableCode)

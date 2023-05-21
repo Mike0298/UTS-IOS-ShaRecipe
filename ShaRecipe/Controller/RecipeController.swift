@@ -20,6 +20,8 @@ class RecipeController: ObservableObject {
         shareableRecipe = getShareableRecipeFromUserDefaults()
     }
     
+    // use to initallize fetchedCuratedRecipe for UI
+    // also use for refresh the fetchedCuratedRecipe for UI. Is it the best way? Maybe not but for now this func can be reuse for this purpose
     func beginFetchCuratedRecipes() {
         isError = false
         isFetching = true
@@ -42,6 +44,7 @@ class RecipeController: ObservableObject {
     
     func fetchCuratedRecipes() async throws -> [CuratedRecipe] {
         let curatedRecipesRes = try await apiService.fetchCurated()
+        // retrieve the recipes from API call then map it into correct array type for UI
         let curatedRecipes = curatedRecipesRes.map { curatedRecipeRes -> CuratedRecipe in
             let curatedRecipe = CuratedRecipe(
                 name: curatedRecipeRes.name,
@@ -59,6 +62,7 @@ class RecipeController: ObservableObject {
     
     func fetchShareableRecipe(code: String) async throws -> ShareableRecipe {
         let shareableRes = try await apiService.getShareable(code: code)
+        // retrieve the recipe from API call then convert it to correct type for UI
         let shareableRecipe = ShareableRecipe(
             name: shareableRes.name,
             description: shareableRes.description,
@@ -72,6 +76,7 @@ class RecipeController: ObservableObject {
     
     func createShareableRecipe(recipe: CreateShareableReq) async throws -> ShareableRecipe {
         let shareableRes = try await apiService.createShareable(recipe: recipe)
+        // retrieve the recipe from API call + form then convert it to correct type for UI
         let shareableRecipe = ShareableRecipe(
             name: recipe.name,
             description: recipe.description,

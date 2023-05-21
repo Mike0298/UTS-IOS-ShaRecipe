@@ -7,6 +7,7 @@
 
 import Foundation
 
+// struct for UI
 struct CuratedRecipe: Identifiable {
     var id = UUID()
     let name: String
@@ -17,6 +18,7 @@ struct CuratedRecipe: Identifiable {
     let category: Category.RawValue
 }
 
+// struct for API GET respond
 struct CuratedRecipeRes: Decodable {
     let name: String
     let image: String
