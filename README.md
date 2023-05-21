@@ -3,9 +3,13 @@ UTS IOS development assignemnt 3
 
 ## Introduction
 ShaRecipe (Share Recipe) is an app that allow user to not only view a wide range of curated recipe but also create their own recipe (shareble recipe). 
+
 Every recipe created by the user will generate a code (shareable code) which the user can share with their friends and family.
+
 If an user have a code, they can enter the code to get the recipe.
-Creating a new recipe or getting a shareable recipe will require network connection. However, once the user fetched/created the shareable recipe, those recipes will be avalible offline
+
+Creating a new recipe or getting a shareable recipe will require network connection. However, once the user fetched/created the shareable recipe, those recipes will be avalible offline.
+
 User can manage their local recipe library by removing unwanted recipe or clear everything.
 
 ## Linked repo
