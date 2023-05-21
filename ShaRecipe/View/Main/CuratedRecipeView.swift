@@ -13,7 +13,7 @@ struct CuratedRecipeView: View {
     var body: some View {
         NavigationView {
             ScrollView{
-                RecipeItems(recipes: recipeController.fetchedCuratedRecipe)
+                RecipeItems(recipes: recipeController.fetchedCuratedRecipe, isFetching: recipeController.isFetching, isError: recipeController.isError)
             }
             .navigationTitle("Curated Recipes")
         }

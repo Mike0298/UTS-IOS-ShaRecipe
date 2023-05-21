@@ -15,7 +15,12 @@ struct ShaRecipeItems: View {
     var body: some View {
         VStack {
             HStack {
-                Text("\(recipes.count) \(recipes.count > 1 ? "recipes" : "recipe") found")
+                Text(
+                    recipes.count == 0 ?
+                    "No recipe found locally"
+                    :
+                    "\(recipes.count) \(recipes.count > 1 ? "recipes" : "recipe") found"
+                )
                     .font(.headline)
                     .fontWeight(.medium)
                     .opacity(0.7)

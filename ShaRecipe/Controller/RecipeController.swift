@@ -12,21 +12,31 @@ class RecipeController: ObservableObject {
         
     @Published private(set) var fetchedCuratedRecipe: [CuratedRecipe] = []
     @Published private(set) var shareableRecipe: [ShareableRecipe] = []
+    @Published private(set) var isFetching: Bool = false
+    @Published private(set) var isError: Bool = false
     
     init() {
         fetchCuratedRecipes()
         shareableRecipe = getShareableRecipeFromUserDefaults()
     }
     
+    // async here because it is not a good idea to put task in init
     func fetchCuratedRecipes() {
+        isError = false
+        isFetching = true
         Task {
             do {
                 let curatedRecipes = try await apiService.fetchCurated()
                 DispatchQueue.main.async {
                     self.fetchedCuratedRecipe = curatedRecipes
+                    self.isFetching = false
                 }
             } catch {
                 print("Failed to fetch curated recipes: \(error)")
+                DispatchQueue.main.async {
+                    self.isFetching = false
+                    self.isError = true
+                }
             }
         }
     }
@@ -57,19 +67,20 @@ class RecipeController: ObservableObject {
         return shareableRecipe
     }
 
-
+    // add a recipe locally and save to user default
     func addShareableRecipe(recipe: ShareableRecipe) {
         shareableRecipe.append(recipe)
         saveShareableRecipeToUserDefaults()
     }
     
+    // check if we already have the code locally
     func isShareableRecipeExist(_ code: String) -> Bool {
         return shareableRecipe.contains(where: { $0.code == code })
     }
     
     // retrive/update/clear data from UserDefault
     func getShareableRecipeFromUserDefaults() -> [ShareableRecipe] {
-        if let data = UserDefaults.standard.data(forKey: "ShareableRecipeKey") {
+        if let data = UserDefaults.standard.data(forKey: "ShaRecipeKey") {
             if let decoded = try? JSONDecoder().decode([ShareableRecipe].self, from: data) {
                 return decoded
             }
@@ -79,13 +90,13 @@ class RecipeController: ObservableObject {
 
     func saveShareableRecipeToUserDefaults() {
         if let encoded = try? JSONEncoder().encode(shareableRecipe) {
-            UserDefaults.standard.set(encoded, forKey: "ShareableRecipeKey")
+            UserDefaults.standard.set(encoded, forKey: "ShaRecipeKey")
         }
     }
     
     func clearShareableRecipe() {
         shareableRecipe = []
-        UserDefaults.standard.removeObject(forKey: "ShareableRecipeKey")
+        UserDefaults.standard.removeObject(forKey: "ShaRecipeKey")
     }
 
     
