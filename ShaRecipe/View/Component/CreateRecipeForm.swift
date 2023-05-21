@@ -21,6 +21,9 @@ struct CreateRecipeForm: View {
     @State private var navigateToRecipe = false
     @State private var showErrorPrompt = false
     
+    @State private var isSubmitting = false
+    @State private var isLoading = false
+    
     @Environment(\.dismiss) var dismiss
     
     var body: some View {
@@ -66,13 +69,17 @@ struct CreateRecipeForm: View {
                         }
                     } label: {
                         Button {
-                            submiteForm()
+                            submitForm()
                         } label: {
-                            Label("Done", systemImage: "checkmark")
-                                .labelStyle(.iconOnly)
+                            if isLoading {
+                                ProgressView() // Show loading indicator when isLoading is true
+                            } else {
+                                Label("Done", systemImage: "checkmark")
+                                    .labelStyle(.iconOnly)
+                            }
                         }
+                        .disabled(isSubmitting || isFormEmpty()) // Disable button based on submission status and form validation
                     }
-                    .disabled(name.isEmpty || description.isEmpty || ingredients.isEmpty || direction.isEmpty)
                 }
             })
             .navigationTitle("New Recipe")
@@ -84,8 +91,38 @@ struct CreateRecipeForm: View {
                     dismissButton: .default(Text("OK"))
                 )
             }
+            .disabled(isSubmitting) // Disable the entire form based on submission status
         }
         .navigationViewStyle(.stack)
+    }
+    
+    private func submitForm() {
+        guard !isSubmitting && !isFormEmpty() else {
+            return
+        }
+        
+        isSubmitting = true // Disable the button and form fields
+        isLoading = true // Show loading indicator
+        
+        Task {
+            do {
+                fetchedRecipe = try await createShareableRecipe()
+                if fetchedRecipe != nil {
+                    showErrorPrompt = false
+                    navigateToRecipe = true
+                }
+            } catch {
+                print("Failed to create shareable recipe: \(error)")
+                showErrorPrompt = true
+            }
+            
+            isSubmitting = false // Re-enable the button and form fields
+            isLoading = false // Hide loading indicator
+        }
+    }
+    
+    private func isFormEmpty() -> Bool {
+        return name.isEmpty || description.isEmpty || ingredients.isEmpty || direction.isEmpty
     }
 }
 
@@ -97,19 +134,7 @@ struct CreateRecipeForm_Previews: PreviewProvider {
 
 extension CreateRecipeForm {
     // handle async for the form
-    private func submiteForm() {
-        Task {
-            fetchedRecipe = await createShareableRecipe()
-            if fetchedRecipe != nil {
-                showErrorPrompt = false
-                navigateToRecipe = true
-            }
-        }
-    }
-    
-    // prepare data and do the API request.
-    // then get data to show on the UI, also ammend the new recipe into local recipe array
-    private func createShareableRecipe() async -> ShareableRecipe? {
+    private func createShareableRecipe() async throws -> ShareableRecipe {
         let recipeReq = CreateShareableReq(
             name: name,
             description: description,
@@ -118,14 +143,8 @@ extension CreateRecipeForm {
             category: selectedCategory.rawValue
         )
         
-        do {
-            let recipe = try await recipeController.createShareableRecipe(recipe: recipeReq)
-            recipeController.addShareableRecipe(recipe: recipe)
-            return recipe
-        } catch {
-            print("Failed to create shareable recipe: \(error)")
-            showErrorPrompt = true
-            return nil
-        }
+        let recipe = try await recipeController.createShareableRecipe(recipe: recipeReq)
+        recipeController.addShareableRecipe(recipe: recipe)
+        return recipe
     }
 }
