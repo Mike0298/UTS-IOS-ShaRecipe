@@ -73,6 +73,13 @@ class RecipeController: ObservableObject {
         saveShareableRecipeToUserDefaults()
     }
     
+    // delete a recipe from the array then save it
+    func deleteShareableRecipe(recipe: ShareableRecipe) {
+        shareableRecipe.removeAll(where: { $0.id == recipe.id })
+        saveShareableRecipeToUserDefaults()
+    }
+
+    
     // check if we already have the code locally
     func isShareableRecipeExist(_ code: String) -> Bool {
         return shareableRecipe.contains(where: { $0.code == code })

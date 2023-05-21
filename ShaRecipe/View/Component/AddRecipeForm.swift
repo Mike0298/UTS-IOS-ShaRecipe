@@ -41,7 +41,7 @@ struct AddRecipeForm: View {
                 ToolbarItem() {
                     NavigationLink(isActive: $navigateToRecipe) {
                         if (fetchedRecipe != nil) {
-                            ShaRecipeView(recipe: fetchedRecipe!)
+                            ShaRecipeView(recipe: fetchedRecipe!, deleteable: false)
                                 .navigationBarBackButtonHidden(true)
                         }
                     } label: {

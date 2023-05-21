@@ -8,7 +8,11 @@
 import SwiftUI
 
 struct ShaRecipeView: View {
+    @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var recipeController: RecipeController
+    
     var recipe: ShareableRecipe
+    var deleteable: Bool
     var body: some View {
         ScrollView {
             VStack(spacing: 30) {
@@ -52,6 +56,20 @@ struct ShaRecipeView: View {
                                 }
                         }
                     }
+                    if deleteable {
+                        Button(action: {
+                            recipeController.deleteShareableRecipe(recipe: recipe)
+                            presentationMode.wrappedValue.dismiss()
+                        }) {
+                            Text("Delete")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(Color.red)
+                                .cornerRadius(10)
+                        }
+                    }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
@@ -62,6 +80,7 @@ struct ShaRecipeView: View {
 
 struct ShaRecipeView_Previews: PreviewProvider {
     static var previews: some View {
-        ShaRecipeView(recipe: RecipeController.allStaticShareableRecipe[0])
+        ShaRecipeView(recipe: RecipeController.allStaticShareableRecipe[0], deleteable: true)
+            .environmentObject(RecipeController())
     }
 }

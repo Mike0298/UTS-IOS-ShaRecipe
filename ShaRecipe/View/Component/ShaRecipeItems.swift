@@ -36,7 +36,7 @@ struct ShaRecipeItems: View {
             
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 160), spacing: 15)], spacing: 15) {
                 ForEach(recipes) { recipe in
-                    NavigationLink(destination: ShaRecipeView(recipe: recipe)) {
+                    NavigationLink(destination: ShaRecipeView(recipe: recipe, deleteable: true)) {
                         ShaRecipeItemCard(recipe: recipe)
                     }
                 }
