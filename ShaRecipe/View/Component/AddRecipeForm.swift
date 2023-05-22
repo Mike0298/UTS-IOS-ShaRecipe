@@ -18,6 +18,8 @@ struct AddRecipeForm: View {
     @State private var showErrorPrompt = false
     @State private var showErrorMessage = ""
     
+    @State private var isLoading = false
+    
     @Environment(\.dismiss) var dismiss
         
     var body: some View {
@@ -48,11 +50,15 @@ struct AddRecipeForm: View {
                         Button {
                             submitForm()
                         } label: {
-                            Label("Done", systemImage: "checkmark")
-                                .labelStyle(.iconOnly)
+                            if isLoading {
+                                ProgressView() // Show loading indicator when isLoading is true
+                            } else {
+                                Label("Done", systemImage: "checkmark")
+                                    .labelStyle(.iconOnly)
+                            }
                         }
+                        .disabled(isLoading || shareableCode.isEmpty) // Disable button based on loading status and form validation
                     }
-                    .disabled(shareableCode.isEmpty)
                 }
             })
             .navigationTitle("New Recipe")
@@ -64,6 +70,7 @@ struct AddRecipeForm: View {
                     dismissButton: .default(Text("OK"))
                 )
             }
+            .disabled(isLoading) // Disable the entire form based on loading status
         }
         .navigationViewStyle(.stack)
     }
@@ -78,34 +85,44 @@ struct AddRecipeForm_Previews: PreviewProvider {
 extension AddRecipeForm {
     // handle async for the form
     private func submitForm() {
+        guard !isLoading && !shareableCode.isEmpty else {
+            return
+        }
+        
+        isLoading = true // Show loading indicator and disable the button and form fields
+        
         // reject the code if we already have it in the local array
         if (recipeController.isShareableRecipeExist(shareableCode)) {
             showErrorMessage = "Recipe code \(shareableCode) is already in your library"
             showErrorPrompt = true
+            isLoading = false // Hide loading indicator and re-enable the button and form fields
+            
             return
         }
         
-        Task {
-            fetchedRecipe = await getShareableRecipe()
-            if fetchedRecipe != nil {
-                showErrorPrompt = false
-                navigateToRecipe = true
+            Task {
+                do {
+                    fetchedRecipe = try await getShareableRecipe()
+                    if fetchedRecipe != nil {
+                        showErrorPrompt = false
+                        navigateToRecipe = true
+                    }
+                } catch {
+                    print("Failed to fetch shareable recipe: \(error)")
+                    showErrorMessage = "Cannot find recipe code \(shareableCode)"
+                    showErrorPrompt = true
+                }
+                DispatchQueue.main.async { //return back to main queue
+                    isLoading = false // Hide loading indicator and // re-enable the button and form fields
+                }
             }
-        }
     }
     
     // prepare data and do the API request.
     // then get data to show on the UI, also ammend the new recipe into local recipe array
-    private func getShareableRecipe() async -> ShareableRecipe? {
-        do {
-            let recipe = try await recipeController.fetchShareableRecipe(code: shareableCode)
-            recipeController.addShareableRecipe(recipe: recipe)
-            return recipe
-        } catch {
-            print("Failed to fetch shareable recipe: \(error)")
-            showErrorMessage = "Cannot find recipe code \(shareableCode)"
-            showErrorPrompt = true
-            return nil
-        }
+    private func getShareableRecipe() async throws -> ShareableRecipe {
+        let recipe = try await recipeController.fetchShareableRecipe(code: shareableCode)
+        recipeController.addShareableRecipe(recipe: recipe)
+        return recipe
     }
 }

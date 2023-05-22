@@ -15,12 +15,16 @@ struct RecipeItems: View {
     var body: some View {
         VStack {
             HStack {
-                if (isFetching && !isError) {
-                    Text("Fetching data, please wait...")
+                if isFetching && !isError {
+                    Text("Fetching data, please wait  ")
                         .font(.headline)
                         .fontWeight(.medium)
                         .opacity(0.7)
-                } else if (!isFetching && isError){
+                        .layoutPriority(1)
+                    ProgressView() // Show loading indicator when fetching data
+                        .progressViewStyle(CircularProgressViewStyle())
+                        .scaleEffect(1)
+                } else if !isFetching && isError {
                     Text("Hmm, we have trouble reaching our server, please try again")
                         .font(.headline)
                         .fontWeight(.medium)
@@ -50,7 +54,7 @@ struct RecipeItems: View {
 struct RecipeItems_Previews: PreviewProvider {
     static var previews: some View {
         ScrollView{
-            RecipeItems(recipes: RecipeController.allStaticCuratedRecipe, isFetching: false, isError: false)
+            RecipeItems(recipes: RecipeController.allStaticCuratedRecipe, isFetching: true, isError: false)
         }
     }
 }
