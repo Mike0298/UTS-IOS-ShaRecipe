@@ -21,7 +21,6 @@ struct CreateRecipeForm: View {
     @State private var navigateToRecipe = false
     @State private var showErrorPrompt = false
     
-    @State private var isSubmitting = false
     @State private var isLoading = false
     
     @Environment(\.dismiss) var dismiss
@@ -78,7 +77,7 @@ struct CreateRecipeForm: View {
                                     .labelStyle(.iconOnly)
                             }
                         }
-                        .disabled(isSubmitting || isFormEmpty()) // Disable button based on submission status and form validation
+                        .disabled(isLoading || isFormEmpty()) // Disable button based on submission status and form validation
                     }
                 }
             })
@@ -91,18 +90,17 @@ struct CreateRecipeForm: View {
                     dismissButton: .default(Text("OK"))
                 )
             }
-            .disabled(isSubmitting) // Disable the entire form based on submission status
+            .disabled(isLoading) // Disable the entire form based on submission status
         }
         .navigationViewStyle(.stack)
     }
     
     private func submitForm() {
-        guard !isSubmitting && !isFormEmpty() else {
+        guard !isLoading && !isFormEmpty() else {
             return
         }
         
-        isSubmitting = true // Disable the button and form fields
-        isLoading = true // Show loading indicator
+        isLoading = true // Disable the button and form fields and show loading indicator
         
         Task {
             do {
@@ -115,9 +113,8 @@ struct CreateRecipeForm: View {
                 print("Failed to create shareable recipe: \(error)")
                 showErrorPrompt = true
             }
-            
-            isSubmitting = false // Re-enable the button and form fields
-            isLoading = false // Hide loading indicator
+
+            isLoading = false // Hide loading indicator and re-enable the button and form fields
         }
     }
     
