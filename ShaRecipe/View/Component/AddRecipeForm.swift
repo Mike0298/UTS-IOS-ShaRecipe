@@ -70,7 +70,6 @@ struct AddRecipeForm: View {
                     dismissButton: .default(Text("OK"))
                 )
             }
-            .disabled(isLoading) // Disable the entire form based on loading status
         }
         .navigationViewStyle(.stack)
     }
@@ -91,38 +90,36 @@ extension AddRecipeForm {
         
         isLoading = true // Show loading indicator and disable the button and form fields
         
-        // reject the code if we already have it in the local array
+        // reject the shareable code if we already have it locally
         if (recipeController.isShareableRecipeExist(shareableCode)) {
             showErrorMessage = "Recipe code \(shareableCode) is already in your library"
             showErrorPrompt = true
             isLoading = false // Hide loading indicator and re-enable the button and form fields
-            
             return
         }
         
             Task {
-                do {
-                    fetchedRecipe = try await getShareableRecipe()
-                    if fetchedRecipe != nil {
-                        showErrorPrompt = false
-                        navigateToRecipe = true
-                    }
-                } catch {
-                    print("Failed to fetch shareable recipe: \(error)")
-                    showErrorMessage = "Cannot find recipe code \(shareableCode)"
-                    showErrorPrompt = true
+                fetchedRecipe = await getShareableRecipe()
+                if fetchedRecipe != nil {
+                    showErrorPrompt = false
+                    navigateToRecipe = true
                 }
-                DispatchQueue.main.async { //return back to main queue
-                    isLoading = false // Hide loading indicator and // re-enable the button and form fields
-                }
+                isLoading = false
             }
     }
     
     // prepare data and do the API request.
     // then get data to show on the UI, also ammend the new recipe into local recipe array
-    private func getShareableRecipe() async throws -> ShareableRecipe {
-        let recipe = try await recipeController.fetchShareableRecipe(code: shareableCode)
-        recipeController.addShareableRecipe(recipe: recipe)
-        return recipe
+    private func getShareableRecipe() async -> ShareableRecipe? {
+        do {
+            let recipe = try await recipeController.fetchShareableRecipe(code: shareableCode)
+            recipeController.addShareableRecipe(recipe: recipe)
+            return recipe
+        } catch {
+            print("Failed to fetch shareable recipe: \(error)")
+            showErrorMessage = "Cannot find recipe code \(shareableCode)"
+            showErrorPrompt = true
+            return nil
+        }
     }
 }

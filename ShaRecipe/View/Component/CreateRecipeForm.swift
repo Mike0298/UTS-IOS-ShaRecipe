@@ -94,33 +94,6 @@ struct CreateRecipeForm: View {
         }
         .navigationViewStyle(.stack)
     }
-    
-    private func submitForm() {
-        guard !isLoading && !isFormEmpty() else {
-            return
-        }
-        
-        isLoading = true // Disable the button and form fields and show loading indicator
-        
-        Task {
-            do {
-                fetchedRecipe = try await createShareableRecipe()
-                if fetchedRecipe != nil {
-                    showErrorPrompt = false
-                    navigateToRecipe = true
-                }
-            } catch {
-                print("Failed to create shareable recipe: \(error)")
-                showErrorPrompt = true
-            }
-
-            isLoading = false // Hide loading indicator and re-enable the button and form fields
-        }
-    }
-    
-    private func isFormEmpty() -> Bool {
-        return name.isEmpty || description.isEmpty || ingredients.isEmpty || direction.isEmpty
-    }
 }
 
 struct CreateRecipeForm_Previews: PreviewProvider {
@@ -130,8 +103,32 @@ struct CreateRecipeForm_Previews: PreviewProvider {
 }
 
 extension CreateRecipeForm {
+    
+    private func submitForm() {
+        guard !isLoading && !isFormEmpty() else {
+            return
+        }
+        
+        isLoading = true // Disable the button and form fields and show loading indicator
+        
+        Task {
+            fetchedRecipe = await createShareableRecipe()
+            if fetchedRecipe != nil {
+                showErrorPrompt = false
+                navigateToRecipe = true
+            }
+
+            isLoading = false // Hide loading indicator and re-enable the button and form fields
+        }
+    }
+    
+    private func isFormEmpty() -> Bool {
+        return name.isEmpty || description.isEmpty || ingredients.isEmpty || direction.isEmpty
+    }
+    
+    
     // handle async for the form
-    private func createShareableRecipe() async throws -> ShareableRecipe {
+    private func createShareableRecipe() async -> ShareableRecipe? {
         let recipeReq = CreateShareableReq(
             name: name,
             description: description,
@@ -140,8 +137,14 @@ extension CreateRecipeForm {
             category: selectedCategory.rawValue
         )
         
-        let recipe = try await recipeController.createShareableRecipe(recipe: recipeReq)
-        recipeController.addShareableRecipe(recipe: recipe)
-        return recipe
+        do {
+            let recipe = try await recipeController.createShareableRecipe(recipe: recipeReq)
+            recipeController.addShareableRecipe(recipe: recipe)
+            return recipe
+        } catch {
+            print("Failed to create shareable recipe: \(error)")
+            showErrorPrompt = true
+            return nil
+        }
     }
 }
