@@ -24,4 +24,6 @@ private let serviceEndPoint = "http://localhost:5000/api"
 ```
 
 ## Author
-- StudentId: 12441376 Commit under the name of Mike Pham or Mike0298
+- StudentId: 12441376 Commit under the name of Mike Pham and Mike0298
+- StudentId: 14304962 Commit under the name of ShinyShinx
+

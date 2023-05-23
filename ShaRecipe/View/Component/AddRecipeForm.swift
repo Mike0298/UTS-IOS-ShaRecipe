@@ -98,14 +98,14 @@ extension AddRecipeForm {
             return
         }
         
-            Task {
-                fetchedRecipe = await getShareableRecipe()
-                if fetchedRecipe != nil {
-                    showErrorPrompt = false
-                    navigateToRecipe = true
-                }
-                isLoading = false
+        Task {
+            fetchedRecipe = await getShareableRecipe()
+            if fetchedRecipe != nil {
+                showErrorPrompt = false
+                navigateToRecipe = true
             }
+            isLoading = false
+        }
     }
     
     // prepare data and do the API request.
