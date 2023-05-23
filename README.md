@@ -22,6 +22,7 @@ User can manage their local recipe library by removing unwanted recipe or clear 
 ```
 private let serviceEndPoint = "http://localhost:5000/api"
 ```
+- Please note that the API server hosted on Render will slow down to hibernation when inactive for a long time. It will take a while for it to resume normal activity when the service is requested. It is normal for the app to take extra time to communicate with the server when this happen. 
 
 ## Author
 - StudentId: 12441376 Commit under the name of Mike Pham and Mike0298
